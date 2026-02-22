@@ -1408,14 +1408,17 @@
             }
 
             var settings = await getSettingsAsync();
-            var gdprBaseUrl = settings.gdprUrl || 'https://gdprinterada.netlify.app/gdpr.html';
+            var gdprBaseUrl = settings.gdprUrl || 'https://iceman77gb-jpg.github.io/interada-crm/gdpr.html';
 
             var adminPhone = (settings.adminPhone || '').replace(/\D/g, '');
             var adminEmail = settings.adminEmail || 'bagaiteanugeorge.gb@gmail.com';
             var gdprLink = gdprBaseUrl
                 + '?gdpr=' + client.gdprToken
                 + '&cn=' + encodeURIComponent(client.name)
-                + '&ae=' + encodeURIComponent(adminEmail);
+                + '&ap=' + adminPhone
+                + '&ae=' + encodeURIComponent(adminEmail)
+                + '&ce=' + encodeURIComponent(client.email || '')
+                + '&cp=' + encodeURIComponent(client.phone || '');
 
             // Marcheaza ca trimis
             client.gdprSent = true;
@@ -1428,18 +1431,39 @@
             // Compune email HTML frumos pentru client
             var subject = 'Acord GDPR - Va rugam semnati documentul';
 
-            // Email plain text - linkul pe linie separata devine automat clickabil in Gmail
-            var emailBody =
+            var emailBody = 
 'Buna ziua, ' + client.name + ',' +
-'\n\nVa contactam din partea INTERADA CONSULTING pentru semnarea Acordului GDPR,' +
-'\nnecesar procesarii dosarului dumneavoastra conform Regulamentului (UE) 2016/679.' +
-'\n\nApasati linkul de mai jos pentru a semna:' +
-'\n\n' + gdprLink +
-'\n\nDupa ce deschideti linkul, completati cele 7 intrebari cu DA/NU,' +
-'\nsemnati in campul de semnatura si apasati butonul SEMNEAZA SI TRIMITE.' +
-'\nProcedura dureaza mai putin de 2 minute.' +
-'\n\nVa multumim,' +
-'\nEchipa Interada Consulting';
+'\n\n' +
+'Va contactam pentru a va solicita semnarea Acordului GDPR,' +
+'\nnecesar pentru a putea procesa datele dumneavoastra personale' +
+'\nin conformitate cu Regulamentul (UE) 2016/679.' +
+'\n\n' +
+'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' +
+'\n📋  ACORD GDPR' +
+'\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' +
+'\n\n' +
+'Prin semnarea acestui acord, confirmati ca sunteti de acord' +
+'\ncu prelucrarea datelor dumneavoastra personale (nume, email,' +
+'\ntelefon) exclusiv in scopul prestarii serviciilor solicitate.' +
+'\n\n' +
+'✔  Datele nu vor fi transmise catre terti' +
+'\n✔  Puteti retrage acordul oricand' +
+'\n✔  Aveti dreptul la acces, rectificare si stergere' +
+'\n\n' +
+'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' +
+'\n\n' +
+'👇  APASATI LINKUL DE MAI JOS PENTRU A SEMNA:' +
+'\n\n' +
+'   ➡  ' + gdprLink +
+'\n\n' +
+'━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' +
+'\n\n' +
+'Dupa ce accesati linkul, veti vedea pagina cu acordul GDPR.' +
+'\nApasati butonul  ✅ SEMNEAZA  si apoi  📤 TRIMITE.' +
+'\nIntreaga procedura dureaza mai putin de 1 minut.' +
+'\n\n' +
+'Va multumim,' +
+'\nEchipa Interada';
 
             var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
                 + '&to=' + encodeURIComponent(client.email || '')
@@ -1483,24 +1507,23 @@
             var div = document.createElement('div');
             div.style.cssText = 'background:white;padding:28px;border-radius:16px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);';
 
+            var waText = 'Buna ziua ' + client.name + '! Va rugam sa semnati Acordul GDPR accesand linkul urmator:\n\n' + link + '\n\nMultumim, Echipa Interada Consulting';
+            var waUrl = 'https://wa.me/' + clientPhone + '?text=' + encodeURIComponent(waText);
+            var hasPhone = clientPhone.length > 6;
+
             div.innerHTML =
                 '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">' +
-                '<span style="font-size:28px;">📧</span>' +
-                '<div><h2 style="margin:0;color:#1F2937;font-size:18px;">GDPR trimis!</h2>' +
-                '<p style="margin:0;color:#6B7280;font-size:13px;">Emailul s-a deschis catre ' + client.name + '</p></div>' +
+                '<span style="font-size:28px;">📋</span>' +
+                '<div><h2 style="margin:0;color:#1F2937;font-size:18px;">Link GDPR generat!</h2>' +
+                '<p style="margin:0;color:#6B7280;font-size:13px;">Client: ' + client.name + '</p></div>' +
                 '</div>' +
 
-                '<div style="background:#f0fdf4;border:2px solid #10B981;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#065f46;">' +
-                '✅ Emailul Gmail s-a deschis automat cu linkul GDPR gata completat.<br>' +
-                '<strong>Apasa Send/Trimite in Gmail pentru a-l expedia clientului.</strong>' +
-                '</div>' +
+                '<p style="font-size:13px;color:#374151;margin:0 0 6px 0;font-weight:600;">🔗 Link GDPR:</p>' +
+                '<div style="background:#EFF6FF;border:1px solid #BFDBFE;padding:10px;border-radius:8px;word-break:break-all;font-size:11px;color:#1D4ED8;margin-bottom:16px;">' + link + '</div>' +
 
-                '<p style="font-size:13px;color:#374151;margin:0 0 8px 0;">Link GDPR (backup - copiaza daca e nevoie):</p>' +
-                '<div style="background:#f3f4f6;padding:10px;border-radius:8px;word-break:break-all;font-size:11px;color:#374151;margin-bottom:16px;" id="gdprLinkDisplay">' + link + '</div>' +
-
-                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">' +
-                '<button id="btnEmailGdpr" style="padding:11px;background:linear-gradient(135deg,#EA4335,#c5372b);color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">📧 Redeschide Gmail</button>' +
-                '<button id="btnCopyGdpr" style="padding:11px;background:#2563EB;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">📋 Copiaza Link</button>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
+                '<button id="btnCopyGdpr" style="padding:13px;background:#2563EB;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;">📋 Copiaza Link</button>' +
+                (hasPhone ? '<button id="btnWaGdpr" style="padding:13px;background:#25D366;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;">💬 Trimite WhatsApp</button>' : '<button id="btnEmailGdpr" style="padding:13px;background:#EA4335;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;">📧 Trimite Gmail</button>') +
                 '</div>' +
                 '<button id="btnMarkSemnatModal" style="width:100%;padding:11px;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;margin-bottom:8px;">✅ Marcare GDPR Semnat (Manual)</button>' +
                 '<button id="btnCloseGdpr" style="width:100%;padding:10px;background:#6B7280;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;">Inchide</button>';
@@ -1508,9 +1531,10 @@
             modal.appendChild(div);
             document.body.appendChild(modal);
 
-            document.getElementById('btnEmailGdpr').onclick = function() {
-                window.open(mailtoHref, '_blank');
-            };
+            var btnEmail = document.getElementById('btnEmailGdpr');
+            if (btnEmail) btnEmail.onclick = function() { window.open(mailtoHref, '_blank'); };
+            var btnWa = document.getElementById('btnWaGdpr');
+            if (btnWa) btnWa.onclick = function() { window.open(waUrl, '_blank'); };
             document.getElementById('btnCopyGdpr').onclick = function() {
                 navigator.clipboard.writeText(link).then(function() {
                     document.getElementById('btnCopyGdpr').textContent = '✅ Copiat!';
