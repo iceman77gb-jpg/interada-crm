@@ -49,9 +49,11 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
     </div>
 
     <div id="successCard">
-      <div style="font-size:48px;margin-bottom:16px;">🎉</div>
-      <h2>Multumim!</h2>
-      <p>Acordul GDPR a fost semnat si trimis cu succes.</p>
+      <div style="font-size:48px;margin-bottom:16px;">✅</div>
+      <h2>Acord semnat!</h2>
+      <p style="color:#374151;margin:12px 0 24px;">Semnatura a fost salvata. Apasati butonul de mai jos pentru a trimite confirmarea:</p>
+      <a id="btnGmailTrimite" href="#" target="_blank" style="display:inline-block;background:#EA4335;color:white;padding:16px 32px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;">📧 Trimite confirmarea</a>
+      <p style="color:#9CA3AF;font-size:12px;margin-top:16px;">Apasati butonul, se va deschide Gmail. Apasati Trimite in Gmail.</p>
     </div>
 
     <div id="formCard">
@@ -241,11 +243,9 @@ window.addEventListener('load', function() {
         var intrebari = ['Prelucrarea datelor personale','Marketing','Oportunitati BROKER CREDITE','Informare la sediu','Comunicare prin Interada','Email/telefon','Posta/curier'];
         var rezumat = 'ACORD GDPR SEMNAT - INTERADA CONSULTING\n\nClient: '+clientName+'\nData: '+now+'\n\n';
         for (var i = 1; i <= 7; i++) rezumat += i+'. '+intrebari[i-1]+': '+(raspunsuri['Punctul '+i]||'-')+'\n';
-        // Deschide Gmail via click pe link (evita blocarea popup)
+        // Seteaza linkul Gmail pe butonul din pagina de succes
         var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(adminEmail)+'&su='+encodeURIComponent('✅ GDPR SEMNAT - '+clientName)+'&body='+encodeURIComponent(rezumat);
-        var a = document.createElement('a');
-        a.href = gmailUrl; a.target = '_blank'; a.rel = 'noopener';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        document.getElementById('btnGmailTrimite').href = gmailUrl;
 
         // Salveaza in Firebase
         if (token) {
@@ -313,9 +313,11 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
     </div>
 
     <div id="successCard">
-      <div style="font-size:48px;margin-bottom:16px;">🎉</div>
-      <h2>Multumim!</h2>
-      <p>Acordul GDPR a fost semnat si trimis cu succes.</p>
+      <div style="font-size:48px;margin-bottom:16px;">✅</div>
+      <h2>Acord semnat!</h2>
+      <p style="color:#374151;margin:12px 0 24px;">Semnatura a fost salvata. Apasati butonul de mai jos pentru a trimite confirmarea:</p>
+      <a id="btnGmailTrimite" href="#" target="_blank" style="display:inline-block;background:#EA4335;color:white;padding:16px 32px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;">📧 Trimite confirmarea</a>
+      <p style="color:#9CA3AF;font-size:12px;margin-top:16px;">Apasati butonul, se va deschide Gmail. Apasati Trimite in Gmail.</p>
     </div>
 
     <div id="formCard">
