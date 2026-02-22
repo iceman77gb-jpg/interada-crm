@@ -485,7 +485,7 @@
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Utilizator</label>
-                    <input type="text" id="username" placeholder="ex: agent1 sau admin" required>
+                    <input type="text" id="username" placeholder="Utilizator" required>
                 </div>
                 <div class="form-group">
                     <label>Parola</label>
@@ -493,14 +493,7 @@
                 </div>
                 <button type="submit" class="btn">Autentificare</button>
             </form>
-            <p style="text-align: center; margin-top: 20px; color: var(--gray); font-size: 13px;">
-                Agent1: agent1 / INTERADA3<br>
-                Agent2: agent2 / INTERADA7<br>
-                Agent3: agent3 / INTERADA1<br>
-                Agent4: agent4 / INTERADA9<br>
-                Agent5: agent5 / INTERADA5<br>
-                Birou: admin / admin123
-            </p>
+
         </div>
     </div>
 
@@ -724,6 +717,27 @@
                     <div id="adminCredentialsSection" style="display: none; margin-top: 20px;">
                         <button class="btn" onclick="exportCredentials()">Descarca Credentiale</button>
                     </div>
+
+                    <!-- PAROLE ACCES -->
+                    <div id="paroleSectiune" style="margin-top:28px;display:none;">
+                        <h3 style="font-size:15px;color:#1F2937;margin-bottom:14px;">🔑 Parole Acces Sistem</h3>
+                        <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:16px;">
+                            <p style="font-size:12px;color:#92400E;margin-bottom:12px;">⚠️ Vizibil doar pentru admin. Nu distribuiti aceste informatii.</p>
+                            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                                <tr style="background:#FEF3C7;">
+                                    <th style="padding:8px 12px;text-align:left;border-radius:6px 0 0 6px;">Utilizator</th>
+                                    <th style="padding:8px 12px;text-align:left;">Parola</th>
+                                    <th style="padding:8px 12px;text-align:left;border-radius:0 6px 6px 0;">Rol</th>
+                                </tr>
+                                <tr><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">agent1</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">INTERADA3</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">Agent</td></tr>
+                                <tr><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">agent2</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">INTERADA7</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">Agent</td></tr>
+                                <tr><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">agent3</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">INTERADA1</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">Agent</td></tr>
+                                <tr><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">agent4</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">INTERADA9</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">Agent</td></tr>
+                                <tr><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">agent5</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">INTERADA5</td><td style="padding:8px 12px;border-bottom:1px solid #FDE68A;">Agent</td></tr>
+                                <tr style="background:#FEF3C7;font-weight:700;"><td style="padding:8px 12px;">admin</td><td style="padding:8px 12px;">admin123</td><td style="padding:8px 12px;">Administrator</td></tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -917,6 +931,7 @@
                 document.getElementById('tab-settings').style.display = 'block';
                 document.getElementById('tab-gdpr-list').style.display = 'block';
                 document.getElementById('adminCredentialsSection').style.display = 'block';
+                document.getElementById('paroleSectiune').style.display = 'block';
                 document.getElementById('welcomeText').textContent = 'Vezi toti clientii de la agenti si modifica setarile.';
 
                 // Admin sees total clients
@@ -1470,12 +1485,25 @@
 
             // Deschide Gmail compose cu subiectul si destinatarul gata
             // Agentul lipeste linkul manual in email (Ctrl+V)
-            var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-                + '&to=' + encodeURIComponent(client.email || '')
-                + '&su=' + encodeURIComponent(subject)
-                + '&body=' + encodeURIComponent(emailBody);
-
-            window.open(gmailUrl, '_blank');
+            // Scurteaza linkul cu TinyURL apoi deschide Gmail
+            fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(gdprLink))
+                .then(function(r) { return r.text(); })
+                .then(function(shortLink) {
+                    var shortBody = emailBody.replace(gdprLink, shortLink);
+                    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+                        + '&to=' + encodeURIComponent(client.email || '')
+                        + '&su=' + encodeURIComponent(subject)
+                        + '&body=' + encodeURIComponent(shortBody);
+                    window.open(gmailUrl, '_blank');
+                })
+                .catch(function() {
+                    // Fallback cu linkul original
+                    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+                        + '&to=' + encodeURIComponent(client.email || '')
+                        + '&su=' + encodeURIComponent(subject)
+                        + '&body=' + encodeURIComponent(emailBody);
+                    window.open(gmailUrl, '_blank');
+                });
 
             loadClients();
             
