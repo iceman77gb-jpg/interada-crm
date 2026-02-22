@@ -48,12 +48,10 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
       <p style="color:#6B7280;margin-top:8px;">Acest link a fost deja folosit. Va multumim!</p>
     </div>
 
-    <div id="successCard">
-      <div style="font-size:48px;margin-bottom:16px;">✅</div>
-      <h2>Acord semnat!</h2>
-      <p style="color:#374151;margin:12px 0 24px;">Semnatura a fost salvata. Apasati butonul de mai jos pentru a trimite confirmarea:</p>
-      <a id="btnGmailTrimite" href="#" target="_blank" style="display:inline-block;background:#EA4335;color:white;padding:16px 32px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;">📧 Trimite confirmarea</a>
-      <p style="color:#9CA3AF;font-size:12px;margin-top:16px;">Apasati butonul, se va deschide Gmail. Apasati Trimite in Gmail.</p>
+    <div id="successCard" style="display:none;text-align:center;padding:40px 20px;">
+      <div style="font-size:48px;margin-bottom:16px;">🎉</div>
+      <h2 style="color:#059669;">Multumim!</h2>
+      <p style="color:#374151;margin-top:8px;">Acordul GDPR a fost semnat si trimis cu succes.</p>
     </div>
 
     <div id="formCard">
@@ -119,7 +117,7 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
         <button class="btn-clear" onclick="clearCanvas()">🗑 Sterge semnatura</button>
       </div>
 
-      <button class="btn-submit" id="btnSubmit" onclick="submitForm()">✅ Semnează și Trimite</button>
+      <a id="btnSubmit" class="btn-submit" href="#" style="display:block;text-align:center;text-decoration:none;" onclick="return handleSubmit(this)">✅ Semnează și Trimite</a>
     </div>
 
   </div>
@@ -224,11 +222,8 @@ window.addEventListener('load', function() {
         hint.style.display = 'block';
     };
 
-    window.submitForm = function() {
-        if (!hasSigned) { alert('Va rugam sa semnati formularul!'); return; }
-
-        var btn = document.getElementById('btnSubmit');
-        btn.disabled = true; btn.textContent = '⏳ Se trimite...';
+    window.handleSubmit = function(linkEl) {
+        if (!hasSigned) { alert('Va rugam sa semnati formularul!'); return false; }
 
         var raspunsuri = {};
         for (var i = 1; i <= 7; i++) {
@@ -239,15 +234,21 @@ window.addEventListener('load', function() {
         var now = new Date().toLocaleString('ro-RO');
         var signedDate = new Date().toISOString();
 
-        // Deschide Gmail INAINTE de orice async - browserul blocheaza popup dupa await
-        var intrebari = ['Prelucrarea datelor personale','Marketing','Oportunitati BROKER CREDITE','Informare la sediu','Comunicare prin Interada','Email/telefon','Posta/curier'];
+        // Construieste Gmail URL
+        var intrebari = ['Prelucrarea datelor personale','Marketing','Oportunitati piata bancara','Informare la sediu','Comunicare prin Interada','Email/telefon','Posta/curier'];
         var rezumat = 'ACORD GDPR SEMNAT - INTERADA CONSULTING\n\nClient: '+clientName+'\nData: '+now+'\n\n';
         for (var i = 1; i <= 7; i++) rezumat += i+'. '+intrebari[i-1]+': '+(raspunsuri['Punctul '+i]||'-')+'\n';
-        // Seteaza linkul Gmail pe butonul din pagina de succes
-        var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(adminEmail)+'&su='+encodeURIComponent('✅ GDPR SEMNAT - '+clientName)+'&body='+encodeURIComponent(rezumat);
-        document.getElementById('btnGmailTrimite').href = gmailUrl;
 
-        // Salveaza in Firebase
+        var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+            + '&to=' + encodeURIComponent(adminEmail)
+            + '&su=' + encodeURIComponent('✅ GDPR SEMNAT - ' + clientName)
+            + '&body=' + encodeURIComponent(rezumat);
+
+        // Seteaza href pe link - click-ul natural va deschide Gmail fara blocare
+        linkEl.href = gmailUrl;
+        linkEl.target = '_blank';
+
+        // Salveaza in Firebase in background
         if (token) {
             db.collection('clients').where('gdprToken','==',token).get().then(function(snap) {
                 if (!snap.empty) {
@@ -259,9 +260,12 @@ window.addEventListener('load', function() {
             }).catch(function(e) { console.error(e); });
         }
 
+        // Arata succes
         document.getElementById('formCard').style.display = 'none';
         document.getElementById('successCard').style.display = 'block';
-    };
+
+        return true; // permite link-ului sa deschida Gmail
+    };;
 YPE html>
 <html lang="ro">
 <head>
@@ -315,9 +319,9 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
     <div id="successCard">
       <div style="font-size:48px;margin-bottom:16px;">✅</div>
       <h2>Acord semnat!</h2>
-      <p style="color:#374151;margin:12px 0 24px;">Semnatura a fost salvata. Apasati butonul de mai jos pentru a trimite confirmarea:</p>
-      <a id="btnGmailTrimite" href="#" target="_blank" style="display:inline-block;background:#EA4335;color:white;padding:16px 32px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;">📧 Trimite confirmarea</a>
-      <p style="color:#9CA3AF;font-size:12px;margin-top:16px;">Apasati butonul, se va deschide Gmail. Apasati Trimite in Gmail.</p>
+      <p style="color:#374151;margin:12px 0 24px;">Pasul 2: Apasati butonul de mai jos pentru a trimite confirmarea catre Interada Consulting:</p>
+      <button onclick="window.open(window._gmailUrl,'_blank')" style="background:#EA4335;color:white;padding:18px 36px;border:none;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;width:100%;">📧 TRIMITE CONFIRMAREA</button>
+      <p style="color:#9CA3AF;font-size:12px;margin-top:16px;">Se va deschide Gmail. Apasati Trimite in Gmail.</p>
     </div>
 
     <div id="formCard">
@@ -383,7 +387,7 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
         <button class="btn-clear" onclick="clearCanvas()">🗑 Sterge semnatura</button>
       </div>
 
-      <button class="btn-submit" id="btnSubmit" onclick="submitForm()">✅ Semnează și Trimite</button>
+      <a id="btnSubmit" class="btn-submit" href="#" style="display:block;text-align:center;text-decoration:none;" onclick="return handleSubmit(this)">✅ Semnează și Trimite</a>
     </div>
 
   </div>
