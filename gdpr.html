@@ -73,7 +73,7 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
         </div>
       </div>
       <div class="question">
-        <p>3. Sunteti de acord sa fiti contactat max. o data/luna cu oportunitati BROKER DE CREDITE?</p>
+        <p>3. Sunteti de acord sa fiti contactat de INTERADA CONSULTING max. o data/luna cu oportunitati din piata bancara?</p>
         <div class="radio-group">
           <div class="radio-option" onclick="selectOption(this,'q3','DA')">✔ DA</div>
           <div class="radio-option" onclick="selectOption(this,'q3','NU')">✘ NU</div>
@@ -241,7 +241,11 @@ window.addEventListener('load', function() {
         var intrebari = ['Prelucrarea datelor personale','Marketing','Oportunitati BROKER CREDITE','Informare la sediu','Comunicare prin Interada','Email/telefon','Posta/curier'];
         var rezumat = 'ACORD GDPR SEMNAT - INTERADA CONSULTING\n\nClient: '+clientName+'\nData: '+now+'\n\n';
         for (var i = 1; i <= 7; i++) rezumat += i+'. '+intrebari[i-1]+': '+(raspunsuri['Punctul '+i]||'-')+'\n';
-        window.open('https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(adminEmail)+'&su='+encodeURIComponent('✅ GDPR SEMNAT - '+clientName)+'&body='+encodeURIComponent(rezumat), '_blank');
+        // Deschide Gmail via click pe link (evita blocarea popup)
+        var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(adminEmail)+'&su='+encodeURIComponent('✅ GDPR SEMNAT - '+clientName)+'&body='+encodeURIComponent(rezumat);
+        var a = document.createElement('a');
+        a.href = gmailUrl; a.target = '_blank'; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
 
         // Salveaza in Firebase
         if (token) {
@@ -333,7 +337,7 @@ body { font-family: Arial, sans-serif; background: #F0FDF4; min-height: 100vh; p
         </div>
       </div>
       <div class="question">
-        <p>3. Sunteti de acord sa fiti contactat max. o data/luna cu oportunitati BROKER DE CREDITE?</p>
+        <p>3. Sunteti de acord sa fiti contactat de INTERADA CONSULTING max. o data/luna cu oportunitati din piata bancara?</p>
         <div class="radio-group">
           <div class="radio-option" onclick="selectOption(this,'q3','DA')">✔ DA</div>
           <div class="radio-option" onclick="selectOption(this,'q3','NU')">✘ NU</div>
