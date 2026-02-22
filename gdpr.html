@@ -169,13 +169,12 @@ function selectOption(el, q, val) {
 }
 
 // ── Canvas ──
+var canvas, ctx, drawing = false, hasSigned = false, answers = {};
 window.addEventListener('load', function() {
-    var canvas = document.getElementById('signCanvas');
+    canvas = document.getElementById('signCanvas');
     var wrapper = document.getElementById('canvasWrapper');
     var hint = document.getElementById('canvasHint');
-    var ctx = canvas.getContext('2d');
-    var drawing = false;
-    var hasSigned = false;
+    ctx = canvas.getContext('2d');
 
     // Set size
     canvas.width = wrapper.offsetWidth;
@@ -439,13 +438,12 @@ function selectOption(el, q, val) {
 }
 
 // ── Canvas ──
+var canvas, ctx, drawing = false, hasSigned = false, answers = {};
 window.addEventListener('load', function() {
-    var canvas = document.getElementById('signCanvas');
+    canvas = document.getElementById('signCanvas');
     var wrapper = document.getElementById('canvasWrapper');
     var hint = document.getElementById('canvasHint');
-    var ctx = canvas.getContext('2d');
-    var drawing = false;
-    var hasSigned = false;
+    ctx = canvas.getContext('2d');
 
     // Set size
     canvas.width = wrapper.offsetWidth;
