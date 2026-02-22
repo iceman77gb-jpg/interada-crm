@@ -195,9 +195,26 @@ function trimite() {
     var raspunsuri = {};
     for (var i=1;i<=7;i++) raspunsuri['Punctul '+i] = ans['q'+i] || '-';
 
-    var lab = ['Prelucrarea datelor','Marketing','Oportunitati piata bancara','Informare la sediu','Comunicare prin Interada','Email/telefon','Posta/curier'];
-    var body = 'ACORD GDPR SEMNAT - INTERADA CONSULTING\n\nClient: '+clientName+'\nData: '+now+'\n\n';
-    for (var i=1;i<=7;i++) body += i+'. '+lab[i-1]+': '+(ans['q'+i]||'-')+'\n';
+    var lab = [
+        'Prelucrarea datelor personale de catre Interada Consulting',
+        'Utilizarea datelor in scopuri de marketing',
+        'Contactat de Interada Consulting max. o data/luna cu oportunitati din piata bancara',
+        'Informare doar la sediul Interada Consulting',
+        'Comunicare doar prin intermediul Interada Consulting',
+        'Comunicare pe cale electronica (email/telefon)',
+        'Comunicare prin posta sau curier'
+    ];
+    var body = '✅ ACORD GDPR SEMNAT - INTERADA CONSULTING\n════════════════════════════════\n\n';
+    body += '👤 Client: ' + clientName + '\n';
+    body += '📅 Data semnarii: ' + now + '\n\n';
+    body += '── RASPUNSURI ──\n\n';
+    for (var i=1;i<=7;i++) {
+        var val = ans['q'+i] || '-';
+        var icon = val==='DA' ? '✔ DA' : (val==='NU' ? '✘ NU' : '- Neselectat');
+        body += 'Punctul ' + i + ': ' + icon + '\n' + lab[i-1] + '\n\n';
+    }
+    body += '════════════════════════════════\n';
+    body += 'Semnat electronic prin platforma Interada Consulting';
 
     // Deschide Gmail
     window.open('https://mail.google.com/mail/?view=cm&fs=1'
