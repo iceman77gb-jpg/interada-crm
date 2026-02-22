@@ -400,7 +400,7 @@
                 <span style="color:#9CA3AF;font-size:12px;font-weight:400;">(cu mouse-ul sau degetul pe telefon)</span>
             </div>
             <div class="canvas-wrapper">
-                <canvas id="signCanvas"></canvas>
+                <canvas id="signCanvas" width="600" height="160" style="display:block;width:100%;height:160px;cursor:crosshair;touch-action:none;background:#FAFFFE;"></canvas>
                 <div class="canvas-hint" id="canvasHint">✍️ Semnați aici</div>
             </div>
             <button class="btn-clear" onclick="clearCanvas()">🗑️ Șterge semnătura</button>
@@ -491,58 +491,16 @@
     checkIfAlreadySigned();
 
     // ── Canvas semnatura nativ HTML5 ──
-    var signCanvas, ctx, drawing = false, hasSigned = false;
-
-    function initCanvas() {
-        signCanvas = document.getElementById('signCanvas');
-        if (!signCanvas) return;
-        ctx = signCanvas.getContext('2d');
-        resizeCanvas();
-
-        signCanvas.addEventListener('mousedown', function(e) {
-            drawing = true; hasSigned = true;
-            var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
-            var hint = document.getElementById('canvasHint');
-            if (hint) hint.classList.add('hidden');
-        });
-        signCanvas.addEventListener('mousemove', function(e) {
-            if (!drawing) return;
-            var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke();
-        });
-        signCanvas.addEventListener('mouseup', function() { drawing = false; });
-        signCanvas.addEventListener('mouseleave', function() { drawing = false; });
-        signCanvas.addEventListener('touchstart', function(e) {
-            e.preventDefault(); drawing = true; hasSigned = true;
-            var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
-            var hint = document.getElementById('canvasHint');
-            if (hint) hint.classList.add('hidden');
-        }, { passive: false });
-        signCanvas.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-            if (!drawing) return;
-            var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke();
-        }, { passive: false });
-        signCanvas.addEventListener('touchend', function() { drawing = false; });
-    }
-
-    function resizeCanvas() {
-        if (!signCanvas) return;
-        var wrapper = document.querySelector('.canvas-wrapper');
-        var w = wrapper ? wrapper.offsetWidth : 300;
-        signCanvas.width = w || 300;
-        signCanvas.height = 160;
-        ctx.fillStyle = '#FAFFFE';
-        ctx.fillRect(0, 0, signCanvas.width, 160);
-        ctx.strokeStyle = '#1D4ED8';
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-    }
-
-    window.addEventListener('resize', function() { resizeCanvas(); hasSigned = false; });
-    window.addEventListener('DOMContentLoaded', initCanvas);
-    // Also try immediately in case DOM already loaded
-    if (document.readyState !== 'loading') { initCanvas(); }
+    var drawing = false;
+    var hasSigned = false;
+    var signCanvas = document.getElementById('signCanvas');
+    var ctx = signCanvas.getContext('2d');
+    ctx.strokeStyle = '#1D4ED8';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.fillStyle = '#FAFFFE';
+    ctx.fillRect(0, 0, signCanvas.width, signCanvas.height);
 
     function getPos(e) {
         var rect = signCanvas.getBoundingClientRect();
@@ -553,6 +511,36 @@
         }
         return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
     }
+
+    signCanvas.onmousedown = function(e) {
+        drawing = true; hasSigned = true;
+        var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+        var hint = document.getElementById('canvasHint');
+        if (hint) hint.style.display = 'none';
+    };
+    signCanvas.onmousemove = function(e) {
+        if (!drawing) return;
+        var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke();
+    };
+    signCanvas.onmouseup = function() { drawing = false; };
+    signCanvas.onmouseleave = function() { drawing = false; };
+
+    signCanvas.addEventListener('touchstart', function(e) {
+        e.preventDefault(); drawing = true; hasSigned = true;
+        var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+        var hint = document.getElementById('canvasHint');
+        if (hint) hint.style.display = 'none';
+    }, { passive: false });
+    signCanvas.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        if (!drawing) return;
+        var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke();
+    }, { passive: false });
+    signCanvas.addEventListener('touchend', function() { drawing = false; });
+
+    function resizeCanvas() {}
+
+    
 
 
 
