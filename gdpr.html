@@ -216,11 +216,11 @@ function trimite() {
     body += '════════════════════════════════\n';
     body += 'Semnat electronic prin platforma Interada Consulting';
 
-    // Deschide Gmail
-    window.open('https://mail.google.com/mail/?view=cm&fs=1'
-        +'&to='+encodeURIComponent(adminEmail)
-        +'&su='+encodeURIComponent('✅ GDPR SEMNAT - '+clientName)
-        +'&body='+encodeURIComponent(body), '_blank');
+    // mailto: functioneaza pe iPhone (deschide Mail/Gmail app) SI pe desktop
+    var mailtoUrl = 'mailto:' + encodeURIComponent(adminEmail)
+        + '?subject=' + encodeURIComponent('✅ GDPR SEMNAT - ' + clientName)
+        + '&body=' + encodeURIComponent(body);
+    window.location.href = mailtoUrl;
 
     // Salveaza Firebase
     if (token) {
