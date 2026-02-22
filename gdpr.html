@@ -209,18 +209,33 @@ function trimite() {
     body += '📅 Data semnarii: ' + now + '\n\n';
     body += '── RASPUNSURI ──\n\n';
     for (var i=1;i<=7;i++) {
-        var val = ans['q'+i] || '-';
-        var icon = val==='DA' ? '✔ DA' : (val==='NU' ? '✘ NU' : '- Neselectat');
-        body += 'Punctul ' + i + ': ' + icon + '\n' + lab[i-1] + '\n\n';
+        var val = ans['q'+i] || '';
+        var icon = val==='DA' ? '[DA]  ✔' : (val==='NU' ? '[NU]  ✘' : '[   ]  —');
+        body += icon + '  ' + lab[i-1] + '\n';
     }
     body += '════════════════════════════════\n';
     body += 'Semnat electronic prin platforma Interada Consulting';
 
-    // mailto: functioneaza pe iPhone (deschide Mail/Gmail app) SI pe desktop
-    var mailtoUrl = 'mailto:' + encodeURIComponent(adminEmail)
-        + '?subject=' + encodeURIComponent('✅ GDPR SEMNAT - ' + clientName)
-        + '&body=' + encodeURIComponent(body);
-    window.location.href = mailtoUrl;
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+        // Pe iPhone deschide Gmail app direct (googlegmail://)
+        var gmailApp = 'googlegmail://co?to=' + encodeURIComponent(adminEmail)
+            + '&subject=' + encodeURIComponent('✅ GDPR SEMNAT - ' + clientName)
+            + '&body=' + encodeURIComponent(body);
+        // Incearca Gmail app, daca nu e instalata fallback la mailto
+        var fallback = setTimeout(function() {
+            window.location.href = 'mailto:' + encodeURIComponent(adminEmail)
+                + '?subject=' + encodeURIComponent('✅ GDPR SEMNAT - ' + clientName)
+                + '&body=' + encodeURIComponent(body);
+        }, 1000);
+        window.location.href = gmailApp;
+        window.addEventListener('blur', function() { clearTimeout(fallback); });
+    } else {
+        // Pe Android/Desktop mailto functioneaza perfect
+        window.location.href = 'mailto:' + encodeURIComponent(adminEmail)
+            + '?subject=' + encodeURIComponent('✅ GDPR SEMNAT - ' + clientName)
+            + '&body=' + encodeURIComponent(body);
+    }
 
     // Salveaza Firebase
     if (token) {
