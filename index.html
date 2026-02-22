@@ -1485,25 +1485,11 @@
 
             // Deschide Gmail compose cu subiectul si destinatarul gata
             // Agentul lipeste linkul manual in email (Ctrl+V)
-            // Scurteaza linkul cu TinyURL apoi deschide Gmail
-            fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(gdprLink))
-                .then(function(r) { return r.text(); })
-                .then(function(shortLink) {
-                    var shortBody = emailBody.replace(gdprLink, shortLink);
-                    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-                        + '&to=' + encodeURIComponent(client.email || '')
-                        + '&su=' + encodeURIComponent(subject)
-                        + '&body=' + encodeURIComponent(shortBody);
-                    window.open(gmailUrl, '_blank');
-                })
-                .catch(function() {
-                    // Fallback cu linkul original
-                    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
-                        + '&to=' + encodeURIComponent(client.email || '')
-                        + '&su=' + encodeURIComponent(subject)
-                        + '&body=' + encodeURIComponent(emailBody);
-                    window.open(gmailUrl, '_blank');
-                });
+            var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+                + '&to=' + encodeURIComponent(client.email || '')
+                + '&su=' + encodeURIComponent(subject)
+                + '&body=' + encodeURIComponent(emailBody);
+            window.open(gmailUrl, '_blank');
 
             loadClients();
             
