@@ -1453,8 +1453,7 @@
 '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' +
 '\n\n' +
 '👇  APASATI LINKUL DE MAI JOS PENTRU A SEMNA:' +
-'\n\n' +
-'   ➡  ' + gdprLink +
+'\n\n' + gdprLink +
 '\n\n' +
 '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' +
 '\n\n' +
@@ -1465,6 +1464,11 @@
 'Va multumim,' +
 '\nEchipa Interada';
 
+            // Copiaza linkul in clipboard automat
+            navigator.clipboard.writeText(gdprLink).catch(function(){});
+
+            // Deschide Gmail compose cu subiectul si destinatarul gata
+            // Agentul lipeste linkul manual in email (Ctrl+V)
             var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
                 + '&to=' + encodeURIComponent(client.email || '')
                 + '&su=' + encodeURIComponent(subject)
